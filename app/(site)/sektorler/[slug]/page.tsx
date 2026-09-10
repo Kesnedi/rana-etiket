@@ -1,0 +1,7 @@
+import { notFound } from 'next/navigation';
+import { db } from '@/lib/db';
+import { getSettings } from '@/lib/settings';
+import { Breadcrumbs,QuoteCTA } from '@/components/ui';
+import { Catalog,type SearchParams } from '@/components/catalog';
+export async function generateMetadata({params}:{params:Promise<{slug:string}>}){const s=await db.sector.findUnique({where:{slug:(await params).slug}});return {title:s?.seoTitle||`${s?.name||'Sektör'} için Baskı ve Ambalaj`,description:s?.seoDescription||s?.description,alternates:{canonical:`/sektorler/${s?.slug}`}};}
+export default async function Sector({params,searchParams}:{params:Promise<{slug:string}>;searchParams:Promise<SearchParams>}){const sector=await db.sector.findFirst({where:{slug:(await params).slug,active:true}});if(!sector)notFound();const s=await getSettings();return <div className="container"><Breadcrumbs items={[{name:'Sektörler',href:'/sektorler'},{name:sector.name}]}/><div className="page-intro"><p className="eyebrow">SEKTÖRE ÖZEL ÜRETİM</p><h1>{sector.name} için<br/>düşünülmüş çözümler.</h1><p>{sector.description}</p></div><Catalog fixedSector={sector.slug} searchParams={await searchParams}/><section className="soft" style={{padding:35,marginBottom:50}}><h2>Neden Rana?</h2><p>{s.home.whyText}</p><p>Tasarım, malzeme ve tamamlayıcı uygulamaları aynı süreçte ele alıyor; sektörünüzün ihtiyaçlarını birlikte değerlendiriyoruz.</p></section><div style={{paddingBottom:80}}><QuoteCTA phone={s.whatsapp}/></div></div>;}

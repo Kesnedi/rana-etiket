@@ -1,0 +1,5 @@
+export function slugify(value: string) { return value.toLocaleLowerCase('tr').replace(/ı/g,'i').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ö/g,'o').replace(/ç/g,'c').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+export function parse<T>(value: string, fallback: T): T { try { return JSON.parse(value) as T; } catch { return fallback; } }
+export function siteUrl() { return (process.env.SITE_URL || 'http://localhost:3000').replace(/\/$/,''); }
+export function whatsapp(phone: string, product?: {name:string;slug:string;whatsappMessage?:string}) { const message = product ? `Merhaba Rana Etiket,\n\n${product.name} ürünü için teklif almak istiyorum.\n\nÖlçü:\nAdet:\nMalzeme:\nBaskı:\nEk uygulama:\nNot:\n\n${product.whatsappMessage || ''}\nÜrün:\n${siteUrl()}/urunler/${product.slug}` : 'Merhaba Rana Etiket, projem için üretim seçenekleri ve teklif hakkında bilgi almak istiyorum.'; return `https://wa.me/${phone.replace(/\D/g,'')}?text=${encodeURIComponent(message)}`; }
+export const address = 'Maltepe Mah. Gümüşsuyu Cad. No:28/304, Odin İş Merkezi, Topkapı / Zeytinburnu / İstanbul';

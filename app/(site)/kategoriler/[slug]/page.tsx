@@ -1,0 +1,6 @@
+import { notFound } from 'next/navigation';
+import { db } from '@/lib/db';
+import { Catalog,type SearchParams } from '@/components/catalog';
+import { Breadcrumbs } from '@/components/ui';
+export async function generateMetadata({params}:{params:Promise<{slug:string}>}){const c=await db.category.findUnique({where:{slug:(await params).slug}});return {title:c?.seoTitle||c?.name||'Kategori',description:c?.seoDescription||c?.description,alternates:{canonical:`/kategoriler/${c?.slug}`}};}
+export default async function CategoryPage({params,searchParams}:{params:Promise<{slug:string}>;searchParams:Promise<SearchParams>}){const c=await db.category.findFirst({where:{slug:(await params).slug,active:true}});if(!c)notFound();const children=await db.category.findMany({where:{parentId:c.id,active:true},orderBy:{sortOrder:'asc'}});return <div className="container"><Breadcrumbs items={[{name:'Ürünler',href:'/urunler'},{name:c.name}]}/><div className="page-intro"><p className="eyebrow">ÜRETİM KOLEKSİYONU</p><h1>{c.name}</h1><p>{c.description}</p>{children.length>0&&<div className="capability-chips">{children.map(v=><a key={v.id} href={`/kategoriler/${v.slug}`}>{v.name}</a>)}</div>}</div><Catalog fixedCategory={c.slug} searchParams={await searchParams}/></div>;}

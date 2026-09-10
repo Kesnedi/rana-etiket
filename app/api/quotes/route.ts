@@ -1,0 +1,5 @@
+import { db } from '@/lib/db';
+import { quoteSchema } from '@/lib/validation';
+import { sameOrigin,rateLimit,apiError,HttpError } from '@/lib/security';
+import { storage } from '@/lib/storage';
+export async function POST(request:Request){let saved='';try{sameOrigin(request);await rateLimit('quote',5,15*60000);if(Number(request.headers.get('content-length'))>9*1024*1024)throw new HttpError(413,'Dosya boyutu sınırı aşıldı.');const form=await request.formData();if(form.get('website'))throw new HttpError(400,'İstek doğrulanamadı.');const {consent:_,...data}=quoteSchema.parse(Object.fromEntries(form));void _;let attachment='',attachmentName='';const file=form.get('file');if(file instanceof File&&file.size){const result=await storage.save(file,true);saved=attachment=result.url;attachmentName=result.name;}const quote=await db.quoteRequest.create({data:{...data,attachment,attachmentName}});return Response.json({ok:true,reference:quote.id.slice(-8).toUpperCase()},{status:201});}catch(e){if(saved)await storage.remove(saved);return apiError(e);}}

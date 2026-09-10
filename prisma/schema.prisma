@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "sqlite"
+  url = env("DATABASE_URL")
+}
+model Category {
+  id String @id @default(cuid())
+  name String
+  slug String @unique
+  description String
+  image String
+  parentId String?
+  seoTitle String @default("")
+  seoDescription String @default("")
+  active Boolean @default(true)
+  sortOrder Int @default(0)
+  products Product[]
+}
+model Product {
+  id String @id @default(cuid())
+  name String
+  slug String @unique
+  categoryId String
+  category Category @relation(fields:[categoryId], references:[id], onDelete:Restrict)
+  summary String
+  description String
+  cover String
+  gallery String @default("[]")
+  alt String
+  specs String @default("{}")
+  uses String @default("[]")
+  options String @default("[]")
+  related String @default("[]")
+  whatsappMessage String @default("")
+  seoTitle String @default("")
+  seoDescription String @default("")
+  active Boolean @default(true)
+  featured Boolean @default(false)
+  sortOrder Int @default(0)
+  sectors Sector[]
+  faqs FAQ[]
+  updatedAt DateTime @updatedAt
+  @@index([active, sortOrder])
+  @@index([categoryId])
+}
+model Sector {
+  id String @id @default(cuid())
+  name String
+  slug String @unique
+  description String
+  image String
+  seoTitle String @default("")
+  seoDescription String @default("")
+  active Boolean @default(true)
+  sortOrder Int @default(0)
+  products Product[]
+}
+model FAQ {
+  id String @id @default(cuid())
+  question String
+  answer String
+  sortOrder Int @default(0)
+  productId String
+  product Product @relation(fields:[productId],references:[id],onDelete:Cascade)
+}
+model BlogPost {
+  id String @id @default(cuid())
+  title String
+  slug String @unique
+  excerpt String
+  content String
+  image String
+  alt String
+  seoTitle String @default("")
+  seoDescription String @default("")
+  active Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model QuoteRequest {
+  id String @id @default(cuid())
+  name String
+  company String
+  phone String
+  email String
+  product String
+  category String
+  quantity String
+  dimensions String
+  message String
+  attachment String @default("")
+  attachmentName String @default("")
+  status String @default("Yeni")
+  notes String @default("")
+  createdAt DateTime @default(now())
+  @@index([status,createdAt])
+}
+model SiteSetting {
+  key String @id
+  value String
+}
+model Media {
+  id String @id @default(cuid())
+  url String @unique
+  name String
+  alt String
+  mime String
+  size Int
+  createdAt DateTime @default(now())
+}
+model AdminSession {
+  id String @id
+  email String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+model RateLimit {
+  key String @id
+  count Int @default(1)
+  expiresAt DateTime
+}

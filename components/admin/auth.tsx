@@ -1,0 +1,6 @@
+'use client';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+export function LoginForm(){const[busy,setBusy]=useState(false),[error,setError]=useState('');const router=useRouter();return <form onSubmit={async e=>{e.preventDefault();setBusy(true);setError('');const form=new FormData(e.currentTarget);try{const res=await fetch('/api/auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.fromEntries(form))});const data=await res.json();if(!res.ok)throw new Error(data.error);router.push('/admin/dashboard');router.refresh();}catch(e){setError(e instanceof Error?e.message:'Giriş yapılamadı.');}finally{setBusy(false);}}}><label className="field">E-posta<input name="email" type="email" required autoComplete="username"/></label><label className="field">Şifre<input name="password" type="password" required autoComplete="current-password"/></label>{error&&<p className="form-status error" role="alert">{error}</p>}<button className="button" disabled={busy}>{busy?'Giriş yapılıyor…':'Giriş yap'}</button><Link href="/" className="text-link">Siteye dön</Link></form>;}
+export function Logout(){const router=useRouter();return <button onClick={async()=>{const res=await fetch('/api/auth',{method:'DELETE'});if(res.ok){router.push('/admin');router.refresh();}}}>Çıkış yap</button>;}

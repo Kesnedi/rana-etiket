@@ -1,0 +1,4 @@
+import { db } from '@/lib/db';
+import { requireAdmin,apiError,HttpError } from '@/lib/security';
+import { storage } from '@/lib/storage';
+export async function GET(_request:Request,{params}:{params:Promise<{id:string}>}){try{await requireAdmin();const q=await db.quoteRequest.findUnique({where:{id:(await params).id}});if(!q?.attachment)throw new HttpError(404,'Dosya bulunamadı.');const data=await storage.readPrivate(q.attachment);return new Response(new Uint8Array(data),{headers:{'Content-Type':q.attachment.endsWith('.pdf')?'application/pdf':'image/webp','Content-Disposition':`attachment; filename="attachment.${q.attachment.endsWith('.pdf')?'pdf':'webp'}"; filename*=UTF-8''${encodeURIComponent(q.attachmentName)}`,'Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff'}});}catch(e){return apiError(e);}}
