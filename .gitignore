@@ -8,3 +8,6 @@ storage/
 public/uploads/
 *.tsbuildinfo
 work/
+
+.vercel
+.env*

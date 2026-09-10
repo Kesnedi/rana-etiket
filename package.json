@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --hostname 127.0.0.1",
-    "build": "next build --webpack",
+    "build": "prisma generate && prisma migrate deploy && prisma db seed && next build --webpack",
     "start": "next start --hostname 127.0.0.1",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
@@ -15,6 +15,7 @@
     "test": "tsx --test tests/*.test.ts",
     "postinstall": "prisma generate"
   },
+  "prisma": {"seed": "tsx prisma/seed.ts"},
   "pnpm": {
     "onlyBuiltDependencies": ["prisma", "@prisma/client", "@prisma/engines", "sharp", "esbuild"]
   },
