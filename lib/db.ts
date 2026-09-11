@@ -8,4 +8,4 @@ const Client: typeof PrismaClient = process.env.NODE_ENV === 'development' && pr
   : PrismaClient;
 const globalDb = globalThis as unknown as { prisma?: PrismaClient };
 export const db = globalDb.prisma ?? new Client();
-if (process.env.NODE_ENV !== 'production') globalDb.prisma = db;
+globalDb.prisma = db;
