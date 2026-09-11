@@ -1,5 +1,7 @@
 node_modules/
+prisma/.local/
 .next/
+.next-local/
 .env
 .env.*
 !.env.example

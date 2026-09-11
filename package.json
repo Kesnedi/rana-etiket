@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --hostname 127.0.0.1",
+    "dev": "node scripts/dev-local.mjs",
+    "db:local:generate": "node scripts/dev-local.mjs --generate-only",
     "build": "prisma generate && prisma migrate deploy && prisma db seed && next build --webpack",
     "start": "next start --hostname 127.0.0.1",
     "lint": "eslint .",
